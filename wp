@@ -69,9 +69,9 @@ case "$action" in
         ;;
     quit)
         # nuke everything
-        kill -9 $(pidof xwinwrap)
-        kill -9 $(pidof gifview)
-        kill -9 $(pidof mplayer)
+        kill -15 $(pidof xwinwrap)
+        kill -15 $(pidof gifview)
+        kill -15 $(pidof mplayer)
         ;;
     *)
         cerr "Error: Unknown action."
