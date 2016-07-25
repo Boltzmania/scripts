@@ -1,0 +1,34 @@
+#!/bin/bash
+
+icon="$HOME/media/pics/Icons/lock.png"
+lscreen='/tmp/screen.png'
+opt="$1"
+
+touch "$lscreen"
+
+# in case something wrong happens
+trap "rm $lscreen; exit" SIGHUP SIGINT SIGTERM
+
+if [ "$opt" = "background-only" ]
+then
+	wallpaper=$(ls $HOME/media/pics/Wallpapers/*.png \
+		| shuf \
+		| head -n 1)
+	cp "$wallpaper" "$lscreen"
+	convert "$lscreen" -resize 1366x768! "$lscreen"
+else
+	# take a screenshot
+	scrot "$lscreen"
+	# pixelate it
+	convert "$lscreen" -scale 10% -scale 1000% "$lscreen"
+	#convert "$lscreen" -implode 1 "$lscreen"
+	#convert "$lscreen" -charcoal 2 "$lscreen"
+fi
+# add text
+convert "$lscreen" -pointsize 42 -fill white -stroke black -gravity center -annotate +0+200 'Type password to unlock' "$lscreen"
+# and a lock icon
+convert "$lscreen" "$icon" -gravity center -composite -matte "$lscreen"
+# lock this bitch up tight
+i3lock -i "$lscreen"
+# remove the evidence
+rm "$lscreen"

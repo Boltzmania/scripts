@@ -1,0 +1,26 @@
+#!/bin/bash
+
+file="${1:-screencast.mp4}"
+duration="${2:-unset}"
+
+if [[ "$duration" == "unset" ]]
+then
+  avconv -s 1366x768 \
+    -framerate 25 \
+    -f x11grab \
+    -i :0.0 \
+    -c:v libx264 \
+    -qp 0 \
+    -preset ultrafast \
+    "$file"
+else
+  avconv -s 1366x768 \
+    -framerate 25 \
+    -f x11grab \
+    -i :0.0 \
+    -c:v libx264 \
+    -qp 0 \
+    -preset ultrafast \
+    -timelimit "$duration" \
+    "$file"
+fi

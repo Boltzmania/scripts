@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# Author: Arno Byrd
+# Date: 2016-07-20
+# Desc: For running a command repeatedly in a repl (such as git, apt-get, rm,
+#     cdls, etc...). Shamelessly stolen from similar command by git2samus.
+#     Github files can be found here:
+#     https://github.com/git2samus/rcfiles/blob/master/.functionrc
+# Usage: repl command
+#     [/current/dir]λ> command first thing
+#     [/current/dir]λ> command second thing
+#     [/current/dir]λ> command something else
+#     [/current/dir]λ> !ls
+#     [/current/dir]λ> <ctrl-D>
+
+# make user defined functions available
+. ~/.functions
+
+# grab everything in args - otherwise use echo command
+cmd="${@:-echo}"
+
+# colors!
+white=$'\e[0;37m'
+cyan=$'\e[0;36m'
+magenta=$'\e[0;35m'
+blue=$'\e[0;34m'
+yellow=$'\e[0;33m'
+green=$'\e[0;32m'
+red=$'\e[0;31m'
+reset=$'\e[0m'
+
+# repl
+while IFS= read -r -e -p "[${magenta}$(pwd)${reset}]${blue}λ${reset}> ${green}${cmd}${reset} " input
+do
+	# if command starts with ! run literally
+	if [[ $input = \!* ]]
+	then
+		cmdlet=${input#\!}
+	# otherwise execute as command with arguments
+	else
+		cmdlet="$cmd $input"
+	fi
+	eval "$cmdlet"; history -s "$input";
+done
+
+# make sure to return prompt on new line
+printf "\n"
